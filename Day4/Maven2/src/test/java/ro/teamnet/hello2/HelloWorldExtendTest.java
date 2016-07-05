@@ -10,5 +10,4 @@ public class HelloWorldExtendTest {
     public void test() throws Exception {
         new HelloWorldExtend().extendSayHello();
     }
-
 }
