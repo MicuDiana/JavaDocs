@@ -9,8 +9,6 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -31,7 +29,4 @@
             </plugin>
         </plugins>
     </build>
-
-
-
 </project>

@@ -1,128 +1,122 @@
 package ro.teamnet.zth.appl.domain;
 
-import ro.teamnet.zth.api.annotations.*;
+import ro.teamnet.zth.api.annotations.Column;
+import ro.teamnet.zth.api.annotations.Id;
+import ro.teamnet.zth.api.annotations.Table;
 
 import java.util.Date;
 
 /**
- * Created by user on 7/7/2016.
+ * Created by user on 07.07.2016.
  */
+@Table(name = "EMPLOYEES")
 public class Employee {
-    @Id(name = "employee_id")
-    private Long employeeId;
 
+    @Id(name = "employee_id")
+    private Long id;
     @Column(name = "first_name")
     private String firstName;
-
     @Column(name = "last_name")
     private String lastName;
-
     @Column(name = "email")
     private String email;
-
     @Column(name = "phone_number")
-    private Long phoneNumber;
-
+    private String phoneNumber;
     @Column(name = "hire_date")
-    private Date date;
-
+    private Date hireDate;
     @Column(name = "job_id")
     private String jobId;
-
     @Column(name = "salary")
     private Long salary;
-
     @Column(name = "commission_pct")
-    private Long commission;
-
+    private Long commisionPct;
     @Column(name = "manager_id")
     private Long managerId;
-
     @Column(name = "department_id")
     private Long departmentId;
 
-    public Long getEmployeeId() {
-        return employeeId;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Long getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public String getJobId() {
-        return jobId;
-    }
-
-    public Long getSalary() {
-        return salary;
-    }
-
-    public Long getCommission() {
-        return commission;
-    }
-
-    public Long getManagerId() {
-        return managerId;
-    }
-
-    public Long getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setPhoneNumber(Long phoneNumber) {
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public Date getHireDate() {
+        return hireDate;
+    }
+
+    public void setHireDate(Date hireDate) {
+        this.hireDate = hireDate;
+    }
+
+    public String getJobId() {
+        return jobId;
     }
 
     public void setJobId(String jobId) {
         this.jobId = jobId;
     }
 
+    public Long getSalary() {
+        return salary;
+    }
+
     public void setSalary(Long salary) {
         this.salary = salary;
     }
 
-    public void setCommission(Long commission) {
-        this.commission = commission;
+    public Long getCommisionPct() {
+        return commisionPct;
+    }
+
+    public void setCommisionPct(Long commisionPct) {
+        this.commisionPct = commisionPct;
+    }
+
+    public Long getManagerId() {
+        return managerId;
     }
 
     public void setManagerId(Long managerId) {
         this.managerId = managerId;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
     public void setDepartmentId(Long departmentId) {
@@ -136,32 +130,34 @@ public class Employee {
 
         Employee employee = (Employee) o;
 
-        if (!employeeId.equals(employee.employeeId)) return false;
-        if (!firstName.equals(employee.firstName)) return false;
+        if (!id.equals(employee.id)) return false;
+        if (firstName != null ? !firstName.equals(employee.firstName) : employee.firstName != null) return false;
         if (!lastName.equals(employee.lastName)) return false;
         if (!email.equals(employee.email)) return false;
-        if (!phoneNumber.equals(employee.phoneNumber)) return false;
-        if (!date.equals(employee.date)) return false;
+        if (phoneNumber != null ? !phoneNumber.equals(employee.phoneNumber) : employee.phoneNumber != null)
+            return false;
+        if (!hireDate.equals(employee.hireDate)) return false;
         if (!jobId.equals(employee.jobId)) return false;
-        if (!salary.equals(employee.salary)) return false;
-        if (!commission.equals(employee.commission)) return false;
-        if (!managerId.equals(employee.managerId)) return false;
-        return departmentId.equals(employee.departmentId);
+        if (salary != null ? !salary.equals(employee.salary) : employee.salary != null) return false;
+        if (commisionPct != null ? !commisionPct.equals(employee.commisionPct) : employee.commisionPct != null)
+            return false;
+        if (managerId != null ? !managerId.equals(employee.managerId) : employee.managerId != null) return false;
+        return departmentId != null ? departmentId.equals(employee.departmentId) : employee.departmentId == null;
 
     }
 
     @Override
     public String toString() {
         return "Employee{" +
-                "employeeId=" + employeeId +
+                "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber=" + phoneNumber +
-                ", date=" + date +
+                ", hireDate=" + hireDate +
                 ", jobId='" + jobId + '\'' +
                 ", salary=" + salary +
-                ", commission=" + commission +
+                ", commisionPct=" + commisionPct +
                 ", managerId=" + managerId +
                 ", departmentId=" + departmentId +
                 '}';

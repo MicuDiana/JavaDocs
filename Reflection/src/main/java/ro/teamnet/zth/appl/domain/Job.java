@@ -1,64 +1,54 @@
 package ro.teamnet.zth.appl.domain;
 
-import ro.teamnet.zth.api.annotations.*;
+import ro.teamnet.zth.api.annotations.Column;
+import ro.teamnet.zth.api.annotations.Id;
+import ro.teamnet.zth.api.annotations.Table;
 
 /**
- * Created by user on 7/7/2016.
+ * Created by user on 07.07.2016.
  */
+@Table(name = "JOBS")
 public class Job {
 
-    @Id( name = "job_id")
-    private Long jobId;
-
+    @Id(name = "job_id")
+    private String id;
     @Column(name = "job_title")
     private String jobTitle;
-
     @Column(name = "min_salary")
     private Long minSalary;
-
     @Column(name = "max_salary")
     private Long maxSalary;
 
-    public Long getJobId() {
-        return jobId;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getJobTitle() {
         return jobTitle;
     }
 
-    public Long getMinSalary() {
-        return minSalary;
-    }
-
-    public Long getMaxSalary() {
-        return maxSalary;
-    }
-
-    public void setJobId(Long jobId) {
-        this.jobId = jobId;
-    }
-
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public Long getMinSalary() {
+        return minSalary;
     }
 
     public void setMinSalary(Long minSalary) {
         this.minSalary = minSalary;
     }
 
-    public void setMaxSalary(Long maxSalary) {
-        this.maxSalary = maxSalary;
+    public Long getMaxSalary() {
+        return maxSalary;
     }
 
-    @Override
-    public String toString() {
-        return "Job{" +
-                "jobId=" + jobId +
-                ", jobTitle='" + jobTitle + '\'' +
-                ", minSalary=" + minSalary +
-                ", maxSalary=" + maxSalary +
-                '}';
+    public void setMaxSalary(Long maxSalary) {
+        this.maxSalary = maxSalary;
     }
 
     @Override
@@ -68,11 +58,20 @@ public class Job {
 
         Job job = (Job) o;
 
-        if (!jobId.equals(job.jobId)) return false;
+        if (!id.equals(job.id)) return false;
         if (!jobTitle.equals(job.jobTitle)) return false;
-        if (!minSalary.equals(job.minSalary)) return false;
-        return maxSalary.equals(job.maxSalary);
+        if (minSalary != null ? !minSalary.equals(job.minSalary) : job.minSalary != null) return false;
+        return maxSalary != null ? maxSalary.equals(job.maxSalary) : job.maxSalary == null;
 
     }
 
+    @Override
+    public String toString() {
+        return "Job{" +
+                "id=" + id +
+                ", jobTitle='" + jobTitle + '\'' +
+                ", minSalary=" + minSalary +
+                ", maxSalary=" + maxSalary +
+                '}';
+    }
 }
