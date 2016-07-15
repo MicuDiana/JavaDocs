@@ -13,4 +13,9 @@ public class DepartmentController {
     public String getAllDepartments() {
         return "allDepartments";
     }
+
+    @MyRequestMethod(urlPath = "/one")
+    public String getOneDepartment() {
+        return "oneDepartment";
+    }
 }

@@ -22,7 +22,7 @@
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>${ojdbc6.version}</version>
-            <scope>provided</scope>
+
         </dependency>
 
         <dependency>
@@ -45,7 +45,16 @@
             <version>${javax.servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+
+
     </dependencies>
+
 
     <build>
         <finalName>MVCApp</finalName>
@@ -67,6 +76,7 @@
                     <username>admin</username>
                     <password>admin</password>
                     <path>/app</path>
+                    <port>9990</port>
                 </configuration>
             </plugin>
         </plugins>

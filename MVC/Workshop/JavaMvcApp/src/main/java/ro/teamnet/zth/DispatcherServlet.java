@@ -1,14 +1,12 @@
 package ro.teamnet.zth;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import ro.teamnet.zth.api.annotations.MyController;
 import ro.teamnet.zth.api.annotations.MyRequestMethod;
-import ro.teamnet.zth.appl.controller.DepartmentController;
-import ro.teamnet.zth.appl.controller.EmployeeController;
-import ro.teamnet.zth.appl.domain.Department;
+import ro.teamnet.zth.api.annotations.MyRequestParam;
 import ro.teamnet.zth.fmk.AnnotationScanUtils;
 import ro.teamnet.zth.fmk.MethodAttributes;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +15,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by user on 7/14/2016.
@@ -51,6 +51,7 @@ public class DispatcherServlet extends HttpServlet {
                             methodAttributes.setControllerClass(controller.getName());
                             methodAttributes.setMethodName(controllerMethod.getName());
                             methodAttributes.setMethodType(myRequestMethod.methodType());
+                            methodAttributes.setParameterType(controllerMethod.getParameterTypes());
                             allowedMethods.put(urlPath,methodAttributes);
                         }
 
@@ -85,7 +86,7 @@ public class DispatcherServlet extends HttpServlet {
             sendExceptionError(ex, req, resp);
         }
         try {
-            replay(r, req, resp);
+            reply(r, req, resp);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -95,22 +96,40 @@ public class DispatcherServlet extends HttpServlet {
     }
 
 
-    private void replay(Object r, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void reply(Object r, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ObjectMapper myObjectMapper = new ObjectMapper();
+        String jsonString = myObjectMapper.writeValueAsString(r);
+
         PrintWriter out = resp.getWriter();
-        out.printf(r.toString());
+        out.printf(jsonString);
     }
 
-    private Object dispatch(HttpServletRequest req, HttpServletResponse resp) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    private Object dispatch(HttpServletRequest req, HttpServletResponse resp) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, IOException {
+
         String pathInfo = req.getPathInfo();
 
-
+        List<Object> parameterValue = new ArrayList<>();
 
          MethodAttributes methodAttributes = allowedMethods.get(pathInfo);
-
         if(methodAttributes == null)
             return "Hello"; //Nu putem procesa url.
+
         Object method  = Class.forName(methodAttributes.getControllerClass()).newInstance();
-        return method.getClass().getMethod(methodAttributes.getMethodName()).invoke(method);
+        Parameter[] parameters = method.getClass().getMethod(methodAttributes.getMethodName(),
+                methodAttributes.getParameterType()).getParameters();
+
+        for(Parameter parameter: parameters) {
+            if(parameter.isAnnotationPresent(MyRequestParam.class)){
+                MyRequestParam annotation = parameter.getAnnotation(MyRequestParam.class);
+                String name = annotation.name();
+                String requestParamValue = req.getParameter(name);
+                Class<?> type = parameter.getType();
+                Object requestParamObject = new ObjectMapper().readValue(requestParamValue, type);
+                parameterValue.add(requestParamObject);
+            }
+        }
+
+        return method.getClass().getMethod(methodAttributes.getMethodName(), Long.class).invoke(method, parameterValue.toArray());
 
     }
 }
