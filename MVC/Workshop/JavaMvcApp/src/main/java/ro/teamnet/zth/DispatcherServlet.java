@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
                             methodAttributes.setMethodName(controllerMethod.getName());
                             methodAttributes.setMethodType(myRequestMethod.methodType());
                             methodAttributes.setParameterType(controllerMethod.getParameterTypes());
-                            allowedMethods.put(urlPath,methodAttributes);
+                            allowedMethods.put(urlPath + myRequestMethod.methodType(),methodAttributes);
                         }
 
 
@@ -68,17 +68,24 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        dispachReply("GET", req, resp);
+        dispachReply(req, resp, "GET");
 
 
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        dispachReply("POST", req, resp);
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        dispachReply(req, resp, "DELETE");
     }
 
-    protected void dispachReply(String type, HttpServletRequest req, HttpServletResponse resp ) {
+
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        dispachReply(req, resp, "POST");
+    }
+
+    protected void dispachReply(HttpServletRequest req, HttpServletResponse resp, String methodType ) {
         Object r = null;
         try {
              r = dispatch(req, resp);
@@ -107,15 +114,18 @@ public class DispatcherServlet extends HttpServlet {
     private Object dispatch(HttpServletRequest req, HttpServletResponse resp) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, IOException {
 
         String pathInfo = req.getPathInfo();
+        pathInfo += req.getMethod();
 
         List<Object> parameterValue = new ArrayList<>();
-
          MethodAttributes methodAttributes = allowedMethods.get(pathInfo);
+
+       // pathInfo = pathInfo + methodAttributes.getMethodType();
         if(methodAttributes == null)
             return "Hello"; //Nu putem procesa url.
 
-        Object method  = Class.forName(methodAttributes.getControllerClass()).newInstance();
-        Parameter[] parameters = method.getClass().getMethod(methodAttributes.getMethodName(),
+        Class<?> controllerClass = Class.forName(methodAttributes.getControllerClass());
+        Object controller = controllerClass.newInstance();
+        Parameter[] parameters = controllerClass.getMethod(methodAttributes.getMethodName(),
                 methodAttributes.getParameterType()).getParameters();
 
         for(Parameter parameter: parameters) {
@@ -124,12 +134,26 @@ public class DispatcherServlet extends HttpServlet {
                 String name = annotation.name();
                 String requestParamValue = req.getParameter(name);
                 Class<?> type = parameter.getType();
-                Object requestParamObject = new ObjectMapper().readValue(requestParamValue, type);
+
+
+                Object requestParamObject;
+
+                if(parameter.getType().equals(String.class)){
+                    requestParamObject = requestParamValue;
+                }
+                else{
+                    requestParamObject = new ObjectMapper().readValue(requestParamValue, type);
+                }
                 parameterValue.add(requestParamObject);
+
+
+
             }
+
         }
 
-        return method.getClass().getMethod(methodAttributes.getMethodName(), Long.class).invoke(method, parameterValue.toArray());
+        Method method = controllerClass.getMethod(methodAttributes.getMethodName(), methodAttributes.getParameterType());
+        return method.invoke(controller, parameterValue.toArray());
 
     }
 }
